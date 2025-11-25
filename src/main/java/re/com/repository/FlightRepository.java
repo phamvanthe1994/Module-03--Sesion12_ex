@@ -6,13 +6,20 @@ import java.util.List;
 
 public interface FlightRepository {
 
-    List<Flight> findAll();
+    List<Flight> findAll(int pageNumber, int pageSize);
 
-    boolean addFlight(Flight flight);
+    long countAll();
+
+    boolean save(Flight flight);
 
     boolean updateFlight(Flight flight);
 
     Flight findFlightById(int id);
 
+    List<Flight> findFlightByFlightName(String flightName);
+
+    List<Flight> findFlightByRoute(String from, String to);
+
+    boolean deleteFlightById(int flightId);
 
 }

@@ -11,6 +11,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -22,7 +23,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"re.com.controller","re.com.service.imp","re.com.repository.imp"})
+@ComponentScan(basePackages = {"re.com.controller", "re.com.service.imp", "re.com.repository.imp"})
 @EnableTransactionManagement
 public class AppConfig {
     //1. Cấu hình Spring - ViewResolver
@@ -108,5 +109,14 @@ public class AppConfig {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
+    }
+
+    //7. Cấu hình upload File
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        // Hạn chế dung lượng của file trong request : 5Mb
+        multipartResolver.setMaxUploadSize(5 * 1024 * 1024);
+        return multipartResolver;
     }
 }

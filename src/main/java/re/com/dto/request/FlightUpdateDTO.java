@@ -1,6 +1,5 @@
 package re.com.dto.request;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,8 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class FlightDTO {
-
+public class FlightUpdateDTO {
     private int flightId;
 
     @NotBlank(message = "Tên chuyến bay không được để trống !")
@@ -41,10 +39,10 @@ public class FlightDTO {
     private String timeUnit;
 
     private MultipartFile travelImageFile;
-    
+
+    private String travelImage;
 
     @Min(value = 0)
     @Max(value = 2)
     private int status = 1;
-
 }

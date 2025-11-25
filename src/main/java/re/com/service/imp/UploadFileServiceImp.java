@@ -11,27 +11,38 @@ import java.util.Map;
 
 @Service
 public class UploadFileServiceImp implements UploadFileService {
-    //Upload file multipart lên cloudiary và nhận lại đường dẫn ảnh trên cloudiary
     @Autowired
     private Cloudinary cloudinary;
 
     @Override
     public String uploadFile(MultipartFile file) {
-        //1. Lấy ra tên ảnh trong file
-
-        String originalFilename = file.getOriginalFilename();
-
-        if (originalFilename != null && originalFilename.contains(".")) {
-            originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-        }
-        //2. upload file lên cloudiary giữ nguyên tên ảnh
-        Map cloudiaryParams = ObjectUtils.asMap("public_id", originalFilename);
-        Map cloudResult = null;
         try {
-            cloudResult = cloudinary.uploader().upload(file.getBytes(), cloudiaryParams);
+            // Lấy tên file mà không cần phần mở rộng
+            String originalFilename = file.getOriginalFilename();
+            String publicId = null;
+
+            if (originalFilename != null && originalFilename.contains(".")) {
+                publicId = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+            } else {
+                publicId = originalFilename;
+            }
+
+            Map uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap("public_id", publicId, "resource_type", "auto")
+            );
+
+            if (uploadResult == null || uploadResult.isEmpty()) {
+                throw new RuntimeException("Upload file thất bại! Cloudinary trả về null.");
+            }
+
+            // Cloudinary trả về secure_url
+            return uploadResult.get("secure_url").toString();
+
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi upload file: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-        return cloudResult.get("url").toString();
     }
+
 }
